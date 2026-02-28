@@ -1,7 +1,7 @@
 {
   raw_response: php_function_output(
     function: "wp_remote_get",
-    arguments: ["https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=[YOUR_PLAYLIST_ID]&maxResults=50&key=[YOUR_API_KEY]"]
+    arguments: ["https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=[YOUR_PLAYLIST_ID]&maxResults=10&key=[YOUR_API_KEY]"]
   ) @private
   response_body: php_function_output(
     function: "wp_remote_retrieve_body",
