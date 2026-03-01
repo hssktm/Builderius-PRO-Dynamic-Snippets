@@ -1,64 +1,65 @@
 YouTube API Snippet – Updated Instructions
-1. API URL Configuration
+
+API URL Configuration
+
 Use the following URL to fetch data from a YouTube playlist:
 
-https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=[YOUR_PLAYLIST_ID]&maxResults=50&key=[YOUR_API_KEY]
+https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=[YOUR_PLAYLIST_ID]&maxResults=50&key=[YOUR_API_KEY
+]
 
 Replace [YOUR_PLAYLIST_ID] with your playlist ID.
-
 Replace [YOUR_API_KEY] with your Google API Key.
 
-This URL returns a JSON with all the videos from the list.
+This URL returns a JSON with up to 50 videos from the playlist.
 
-2. Understanding and Modifying the Snippet
+Understanding and Modifying the Snippet
+
 Main variables:
 
 raw_response – the result of the API call.
-
 response_body – the response body.
-
 decoded_data – JSON decoded data.
+youtube_list – filters decoded_data.items and selects only the necessary fields. This is the name you will use in a Collection element to fetch data dynamically.
 
-video_items – contains all elements from the list.
+Current expression (ID, title, and high thumbnail):
 
-youtube_list – filters video_items and selects only the necessary fields. This is the name you will use in a Collection element to fetch data dynamically.
+expression: "foreach(decoded_data.items, (item) -> { { id: item.snippet.resourceId.videoId, title: item.snippet.title, image: item.snippet.thumbnails.high.url } })"
 
-Modifying youtube_list to include additional fields:
+Updated with description:
 
-Original (ID, title, and image only):
-expression: "foreach(video_items, (item) -> { { id: item.snippet.resourceId.videoId, title: item.snippet.title, image: item.snippet.thumbnails.standard.url } })"
+expression: "foreach(decoded_data.items, (item) -> { { id: item.snippet.resourceId.videoId, title: item.snippet.title, image: item.snippet.thumbnails.high.url, description: item.snippet.description } })"
 
-Updated with description (adding the field at the end of the object):
-expression: "foreach(video_items, (item) -> { { id: item.snippet.resourceId.videoId, title: item.snippet.title, image: item.snippet.thumbnails.standard.url, description: item.snippet.description } })"
+To add a new field, add a comma after the last property inside the object and define the new key followed by its API path.
 
-To add a new field, simply add a comma after the last element inside the inner braces and specify the name you want to give it followed by its API path (e.g., description: item.snippet.description).
+Example adding more fields:
 
-youtube_list now cleans video_items and contains the fields: id, title, image, and description.
+expression: "foreach(decoded_data.items, (item) -> { { id: item.snippet.resourceId.videoId, title: item.snippet.title, image: item.snippet.thumbnails.high.url, description: item.snippet.description, publishedAt: item.snippet.publishedAt, channelTitle: item.snippet.channelTitle } })"
 
-Following this same logic, you can add other data such as publishedAt: item.snippet.publishedAt or channelTitle: item.snippet.channelTitle.
+youtube_list now contains only the defined fields such as id, title, image, description, publishedAt, and channelTitle.
 
-3. Usage in a Collection Element
+Usage in a Collection Element
+
 Create a Collection element in Builderius.
 
-Select the snippet data source and use youtube_list as the collection.
+Select the snippet data source.
+Use youtube_list as the collection.
 
 Map the fields to your elements:
 
 {{id}} -> Video ID
-
 {{title}} -> Title
-
 {{image}} -> Thumbnail
-
 {{description}} -> Description
+{{publishedAt}} -> Publish date
+{{channelTitle}} -> Channel name
 
-This prevents exposing all fields from video_items and only calls the ones you need.
+This prevents exposing all fields from decoded_data.items and only returns the ones you explicitly define.
 
-4. Embedding in an iframe
+Embedding in an iframe
+
 To display the video dynamically:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/{{id}}" title="{{title}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 {{id}} is automatically replaced with each video ID from youtube_list.
-
 {{title}} can be used as the title attribute for accessibility.
