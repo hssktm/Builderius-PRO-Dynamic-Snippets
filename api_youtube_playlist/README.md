@@ -1,3 +1,5 @@
+Caution: Use this for testing only. It can result in high YouTube API usage. There is currently no official way to prevent it, so it’s best to wait for updates before using it in production.
+
 YouTube API Snippet – Updated Instructions
 
 API URL Configuration
