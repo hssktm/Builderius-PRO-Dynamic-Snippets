@@ -1,1 +1,75 @@
+# name: Custom posts query: Taxonomy terms
+# desc: Display posts from specific categories with flat category array
+{
+  # START: Main query to fetch posts
+  loop: posts_query(
+    arguments: {
+      post_type: ["post"]
+      posts_per_page: 3
+      tax_query: {
+        array: [
+          {
+            taxonomy: "category"
+            field: "slug"
+            # CHANGE HERE: Add or remove category slugs to filter
+            terms: ["slug-1", "slug-2"]
+            operator: "IN"
+          }
+        ]
+      }
+      # CHANGE HERE: Sort by date, title, or ID
+      orderby: "date"
+      order: "DESC"
+    }
+  ) {
+    # START: Individual post data loop
+    posts {
+      ID @private
+      title: post_title
+      url: permalink
+      excerpt: post_excerpt
+      date: post_date
+      img: featured_image {
+        alt: alt_text
+        thumb: file_url(size: THUMBNAIL)
+        md: file_url(size: MEDIUM)
+        lg: file_url(size: MEDIUM_LARGE)
+      }
+      # START: terms for the current post
+      raw_categories: terms_query(
+        arguments: {
+          taxonomy: "category"
+          object_ids: "{{ID}}"
+        }
+      ) @private {
+        terms {
+          term_id @private
+          taxonomy @private
+          name
+          url: php_function_output(
+            function: "get_term_link"
+            arguments: ["{{term_id}}", "{{taxonomy}}"]
+          )
+        }
+      }
+      # CHANGE HERE: This expression flattens the category array structure
+      categories: expression_result(
+        expression: "raw_categories.terms"
+      )
+    }
+    # END: Individual post data loop
 
+    # START: Pagination and counts
+    has_pagination
+    pagination(
+      arguments: {
+        # CHANGE HERE: Change the URL parameter for pagination
+        pagination_url_param_name: "posts_page"
+      }
+    ) {
+      links
+    }
+    # Shows the total number of posts found
+    posts_count
+  }
+}
