@@ -1,0 +1,15 @@
+# name: Estimated Reading Time
+# desc: Calculate reading time based on word count of the current post
+{
+  post {
+    raw_content: post_content @private
+    
+    clean_text: php_function_output(function: "strip_tags", arguments: ["{{raw_content}}"]) @private
+    word_count: php_function_output(function: "str_word_count", arguments: ["{{clean_text}}"]) @private
+    
+    # Calculation: total words / 200 (average speed)
+    reading_time: expression_result(
+      expression: "ceil(word_count / 200)"
+    )
+  }
+}
