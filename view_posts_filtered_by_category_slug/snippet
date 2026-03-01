@@ -1,4 +1,4 @@
-# name: Custom posts query: Taxonomy terms
+# name: Customized post query based on taxonomy terms
 # desc: Display posts from specific categories with flat category array
 {
   # START: Main query to fetch posts
