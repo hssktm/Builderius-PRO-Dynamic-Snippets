@@ -1,0 +1,43 @@
+# name: Get previous and next posts 
+# desc: Fetch adjacent posts relative to the current post with featured images
+{
+  post {
+    ID @private
+    
+    # Get previous and next post objects
+    prev_obj: php_function_output(function: "get_previous_post") @private
+    next_obj: php_function_output(function: "get_next_post") @private
+
+    # Previous post data
+    prev_post: posts_query(
+      arguments: {
+        post__in: ["{{prev_obj.ID}}"]
+      }
+    ) {
+      posts {
+        title: post_title
+        url: permalink
+        img: featured_image {
+          md: file_url(size: MEDIUM)
+          lg: file_url(size: MEDIUM_LARGE)
+        }
+      }
+    }
+
+    # Next post data
+    next_post: posts_query(
+      arguments: {
+        post__in: ["{{next_obj.ID}}"]
+      }
+    ) {
+      posts {
+        title: post_title
+        url: permalink
+        img: featured_image {
+          md: file_url(size: MEDIUM)
+          lg: file_url(size: MEDIUM_LARGE)
+        }
+      }
+    }
+  }
+}
