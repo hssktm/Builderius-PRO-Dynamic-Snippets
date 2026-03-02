@@ -86,15 +86,6 @@ Set `data-b-context` on the Collection to point at the array. Inside the Templat
 
 ## Available Snippets
 
-**Note for new snippets:**  
-Each snippet you add should include the comments `# name:` and `# desc:` at the beginning of the `snippet` file.  
-
-Example:
-
-# name: Snippet Title
-# desc: Short description of what this snippet does
-
-
 ### GraphQL Data Variables
 
 | Snippet | Description |
@@ -116,13 +107,20 @@ More snippet types (layouts, CSS) coming soon.
 
 ## Contributing
 
-1. Create a folder with a descriptive `snake_case` name
-2. Add a `snippet` file with the content (GraphQL query, JSON, or CSS)
-3. Add a `README.md` that covers:
-   - What the snippet does
-   - How to customize it (reference any `# CHANGE HERE` markers)
-   - What fields/classes/modules it provides
-4. Keep snippet-specific instructions in the folder README, not here
+1. **Important:** Each snippet you add must include the comments `# name:` and `# desc:` at the very beginning of the `snippet` file.
+
+   Example:
+   # name: Snippet Title
+   # desc: Short description of what this snippet does
+
+2. Create a folder with a descriptive `snake_case` name.
+3. Add a `snippet` file with the content (GraphQL query).
+4. Add a `README.md` that covers:
+   - What the snippet does.
+   - How to customize it (reference any `# CHANGE HERE` markers).
+   - What fields/classes/modules it provides.
+5. Keep snippet-specific instructions in the folder README, not here.
+   
 
 ---
 
