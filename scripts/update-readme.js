@@ -15,7 +15,6 @@ const folders = fs.readdirSync(root).filter(folder => {
 });
 
 let tableRows = "";
-
 // Loop through each folder to build table rows
 folders.sort().forEach(folder => {
   const snippetPath = path.join(root, folder, "snippet");
