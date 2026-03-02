@@ -86,6 +86,15 @@ Set `data-b-context` on the Collection to point at the array. Inside the Templat
 
 ## Available Snippets
 
+**Note for new snippets:**  
+Each snippet you add should include the comments `# name:` and `# desc:` at the beginning of the `snippet` file.  
+
+Example:
+
+# name: Snippet Title
+# desc: Short description of what this snippet does
+
+
 ### GraphQL Data Variables
 
 | Snippet | Description |
