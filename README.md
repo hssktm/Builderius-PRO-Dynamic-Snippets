@@ -89,15 +89,13 @@ Set `data-b-context` on the Collection to point at the array. Inside the Templat
 ### GraphQL Data Variables
 
 | Snippet | Description |
-|---------|-------------|
-| `api_youtube_playlist` | Fetch YouTube playlist videos via the Google API |
-| `breadcrumb` | Auto-generated hierarchical breadcrumb navigation |
-| `comments_current_post` | Threaded comments with recursive replies and pagination |
-| `direct_logout_with_redirect` | Secure logout URL that skips WP confirmation |
-| `estimated_reading_time_of_current_post` | Calculate read time from post word count |
-| `get_previous_and_next_posts` | Adjacent post navigation with featured images |
-| `view_posts_filtered_by_category_slug` | Filtered post list by category with pagination |
-
+| `api_youtube_playlist` | No description |
+| `Dynamic Breadcrumbs` | Full breadcrumb system for posts, custom post types, and taxonomies without manual text. |
+| `Current post comments` | Hierarchical extraction of comments from the current post with response threads and active pagination |
+| `Direct Logout with Redirect` | Generates a secure logout URL that skips confirmation and redirects to a custom page |
+| `Estimated Reading Time` | Calculate reading time based on word count of the current post |
+| `Get previous and next posts` | Fetch adjacent posts relative to the current post with featured images |
+| `Customized post query based on taxonomy terms` | Display posts from specific categories with flat category array |
 More snippet types (layouts, CSS) coming soon.
 
 ---
