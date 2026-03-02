@@ -1,5 +1,5 @@
 # name: Direct Logout with Redirect
-# desc: Generates a secure logout URL that skips confirmation and redirects to a custom page.
+# desc: Generates a secure logout URL that skips confirmation and redirects to a custom page
 {
   target_redirect: expression_result(expression: "'/home'") @private
   
