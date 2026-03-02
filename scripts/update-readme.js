@@ -15,6 +15,7 @@ const folders = fs.readdirSync(root).filter(folder => {
 });
 
 let tableRows = "";
+
 // Loop through each folder to build table rows
 folders.sort().forEach(folder => {
   const snippetPath = path.join(root, folder, "snippet");
@@ -24,11 +25,9 @@ folders.sort().forEach(folder => {
   if (fs.existsSync(snippetPath)) {
     const content = fs.readFileSync(snippetPath, "utf8");
 
-    // Extract name from # name: marker
     const nameMatch = content.match(/^#\s*name:\s*(.+)$/m);
     if (nameMatch) name = nameMatch[1].trim();
 
-    // Extract description from # desc: marker
     const descMatch = content.match(/^#\s*desc:\s*(.+)$/m);
     if (descMatch) description = descMatch[1].trim();
   }
@@ -51,7 +50,7 @@ if (tableStart === -1 || tableEnd === -1) {
 
 // Preserve content before and after the table
 const beforeTable = original.substring(0, tableStart + tableHeader.length) + "\n";
-const afterTable = original.substring(tableEnd);
+const afterTable = "\n" + original.substring(tableEnd);
 
 // Build the new README content
 const updated = beforeTable + tableRows + afterTable;
