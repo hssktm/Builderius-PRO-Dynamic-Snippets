@@ -46,17 +46,17 @@ if (headerIndex === -1) {
   process.exit(1);
 }
 
-// Find where the table data ends (next empty line or next section)
+// Find where the table data ends (first line that does NOT start with |)
 let endIndex = headerIndex + 1;
-while (endIndex < lines.length && lines[endIndex].trim().startsWith("|") && !lines[endIndex].startsWith("|---------")) {
+while (endIndex < lines.length && lines[endIndex].trim().startsWith("|")) {
   endIndex++;
 }
 
-// Build the new README
+// Preserve content before and after the table
 const beforeTable = lines.slice(0, headerIndex + 1).join("\n");
 const afterTable = lines.slice(endIndex).join("\n");
 
-// Add table separator and new rows
+// Build the new README content
 const updated = beforeTable + "\n|---------|-------------|\n" + tableRows + "\n" + afterTable;
 
 // Save the updated README
