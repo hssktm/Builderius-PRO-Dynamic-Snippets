@@ -1,5 +1,5 @@
 # name: Get previous and next posts 
-# desc: Fetch adjacent posts relative to the current post with featured images.
+# desc: Fetch adjacent posts relative to the current post with featured images
 {
   post {
     ID @private
