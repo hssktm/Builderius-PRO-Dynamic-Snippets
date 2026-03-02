@@ -37,23 +37,27 @@ folders.sort().forEach(folder => {
 
 // Read the current README
 const original = fs.readFileSync(readmePath, "utf8");
+const lines = original.split("\n");
 
-// Identify start and end of the table
-const tableHeader = "| Snippet | Description |";
-const tableStart = original.indexOf(tableHeader);
-const tableEnd = original.indexOf("More snippet types (layouts, CSS) coming soon.");
-
-if (tableStart === -1 || tableEnd === -1) {
-  console.error("Table markers not found in README.md");
+// Find the index of the table header
+const headerIndex = lines.findIndex(line => line.trim() === "| Snippet | Description |");
+if (headerIndex === -1) {
+  console.error("Table header not found in README.md");
   process.exit(1);
 }
 
-// Preserve content before and after the table
-const beforeTable = original.substring(0, tableStart + tableHeader.length) + "\n|---------|-------------|\n";
-const afterTable = "\n" + original.substring(tableEnd);
+// Find where the table data ends (next empty line or next section)
+let endIndex = headerIndex + 1;
+while (endIndex < lines.length && lines[endIndex].trim().startsWith("|") && !lines[endIndex].startsWith("|---------")) {
+  endIndex++;
+}
 
-// Build the new README content
-const updated = beforeTable + tableRows + afterTable;
+// Build the new README
+const beforeTable = lines.slice(0, headerIndex + 1).join("\n");
+const afterTable = lines.slice(endIndex).join("\n");
+
+// Add table separator and new rows
+const updated = beforeTable + "\n|---------|-------------|\n" + tableRows + "\n" + afterTable;
 
 // Save the updated README
 fs.writeFileSync(readmePath, updated);
