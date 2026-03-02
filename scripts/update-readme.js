@@ -49,7 +49,7 @@ if (tableStart === -1 || tableEnd === -1) {
 }
 
 // Preserve content before and after the table
-const beforeTable = original.substring(0, tableStart + tableHeader.length) + "\n";
+const beforeTable = original.substring(0, tableStart + tableHeader.length) + "\n|---------|-------------|\n";
 const afterTable = "\n" + original.substring(tableEnd);
 
 // Build the new README content
