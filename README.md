@@ -90,13 +90,14 @@ Set `data-b-context` on the Collection to point at the array. Inside the Templat
 
 | Snippet | Description |
 |---------|-------------|
-| `api_youtube_playlist` | No description |
+| `YouTube Playlist API` | Fetches videos from a YouTube playlist using the Google API. Important: This snippet uses API tokens and repeated requests can be costly. |
 | `Dynamic Breadcrumbs` | Full breadcrumb system for posts, custom post types, and taxonomies without manual text. |
 | `Current post comments` | Hierarchical extraction of comments from the current post with response threads and active pagination |
 | `Direct Logout with Redirect` | Generates a secure logout URL that skips confirmation and redirects to a custom page |
 | `Estimated Reading Time` | Calculate reading time based on word count of the current post. |
 | `Get previous and next posts` | Fetch adjacent posts relative to the current post with featured images |
 | `Customized post query based on taxonomy terms` | Display posts from specific categories with flat category array |
+
 
 
 
