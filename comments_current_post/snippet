@@ -1,0 +1,52 @@
+# name: Current post comments
+# desc: Hierarchical extraction of comments from the current post with response threads and active pagination
+{
+  post {
+    comments_open
+    # START: Main query to fetch comments
+    comments_query(
+      arguments: {
+        # CHANGE HERE: Set the number of top-level comments per page
+        comments_per_page: 10
+        # This ensures we only get root comments at the first level
+        parent: 0
+      }
+    ) {
+      # START: Individual comment data loop
+      comments {
+        comment_ID
+        comment_author
+        comment_content
+        comment_date
+        comment_approved
+        # START: Recursive nested replies (children)
+        # CHANGE HERE: Adjust 'depth' to control how many levels of replies to fetch
+        children @recursive(depth: 5) {
+          comment_ID
+          comment_author
+          comment_content
+          comment_date
+          comment_approved
+        }
+        # END: Recursive nested replies
+      }
+      # END: Individual comment data loop
+
+      # START: Pagination and counts
+      has_pagination
+      pagination(
+        arguments: {
+          # CHANGE HERE: Change the URL parameter for comment pagination (default is 'cpage')
+          pagination_url_param_name: "cpage"
+        }
+      ) {
+        current_page
+        total_pages
+        links
+      }
+      # Shows the total number of comments for this post
+      comments_count
+      # END: Pagination and counts
+    }
+  }
+}
