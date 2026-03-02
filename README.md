@@ -98,7 +98,6 @@ Set `data-b-context` on the Collection to point at the array. Inside the Templat
 | `Get previous and next posts` | Fetch adjacent posts relative to the current post with featured images |
 | `Customized post query based on taxonomy terms` | Display posts from specific categories with flat category array |
 
-
 More snippet types (layouts, CSS) coming soon.
 
 ---
