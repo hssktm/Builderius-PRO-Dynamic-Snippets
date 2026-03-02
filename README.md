@@ -106,7 +106,7 @@ Set `data-b-context` on the Collection to point at the array. Inside the Templat
 
 
 
-More snippet types (layouts, CSS) coming soon.
+More snippet types (GraphQL query) coming soon.
 
 ---
 
@@ -124,7 +124,7 @@ More snippet types (layouts, CSS) coming soon.
    - What the snippet does.
    - How to customize it (reference any `# CHANGE HERE` markers).
    - What fields/classes/modules it provides.
-5. Keep snippet-specific instructions in the folder README, not here.
+5. Keep the specific instructions for each snippet in the README.md folder for each snippet and let the workflow automatically update the "Available Snippets" table in the main README, so you don't need to edit it manually.
    
 
 ---
