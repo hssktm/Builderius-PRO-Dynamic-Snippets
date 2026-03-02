@@ -1,5 +1,5 @@
 # name: Estimated Reading Time
-# desc: Calculate reading time based on word count of the current post
+# desc: Calculate reading time based on word count of the current post.
 {
   post {
     raw_content: post_content @private
