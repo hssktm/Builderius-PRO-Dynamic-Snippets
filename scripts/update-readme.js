@@ -4,7 +4,7 @@ const path = require("path");
 const root = path.join(__dirname, "..");
 const readmePath = path.join(root, "README.md");
 
-// Detectar carpetas con snippet
+// Find all snippet folders
 const folders = fs.readdirSync(root).filter(folder => {
   const fullPath = path.join(root, folder);
   return (
@@ -14,12 +14,9 @@ const folders = fs.readdirSync(root).filter(folder => {
   );
 });
 
-let table = `### GraphQL Data Variables
+let tableRows = "";
 
-| Snippet | Description |
-|---------|-------------|
-`;
-
+// Loop through each folder to build table rows
 folders.sort().forEach(folder => {
   const snippetPath = path.join(root, folder, "snippet");
   let name = folder;
@@ -28,31 +25,38 @@ folders.sort().forEach(folder => {
   if (fs.existsSync(snippetPath)) {
     const content = fs.readFileSync(snippetPath, "utf8");
 
+    // Extract name from # name: marker
     const nameMatch = content.match(/^#\s*name:\s*(.+)$/m);
     if (nameMatch) name = nameMatch[1].trim();
 
+    // Extract description from # desc: marker
     const descMatch = content.match(/^#\s*desc:\s*(.+)$/m);
     if (descMatch) description = descMatch[1].trim();
   }
 
-  table += `| \`${name}\` | ${description} |\n`;
+  tableRows += `| \`${name}\` | ${description} |\n`;
 });
 
-// Leer README principal
+// Read the current README
 const original = fs.readFileSync(readmePath, "utf8");
 
-const start = original.indexOf("### GraphQL Data Variables");
-const end = original.indexOf("More snippet types");
+// Identify start and end of the table
+const tableHeader = "| Snippet | Description |";
+const tableStart = original.indexOf(tableHeader);
+const tableEnd = original.indexOf("More snippet types (layouts, CSS) coming soon.");
 
-if (start === -1 || end === -1) {
-  console.log("Markers not found in README.md");
+if (tableStart === -1 || tableEnd === -1) {
+  console.error("Table markers not found in README.md");
   process.exit(1);
 }
 
-const before = original.substring(0, start);
-const after = original.substring(end);
+// Preserve content before and after the table
+const beforeTable = original.substring(0, tableStart + tableHeader.length) + "\n";
+const afterTable = original.substring(tableEnd);
 
-const updated = before + table + "\n" + after;
+// Build the new README content
+const updated = beforeTable + tableRows + afterTable;
 
+// Save the updated README
 fs.writeFileSync(readmePath, updated);
 console.log("README updated successfully.");
