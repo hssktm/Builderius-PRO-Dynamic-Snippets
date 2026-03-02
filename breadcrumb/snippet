@@ -1,5 +1,5 @@
 # name: Dynamic Breadcrumbs
-# desc: Full breadcrumb system for posts, custom post types, and taxonomies without manual text
+# desc: Full breadcrumb system for posts, custom post types, and taxonomies without manual text.
 {
   is_tax_page: php_function_output(
     function: "is_tax"
