@@ -113,7 +113,7 @@ More snippet types (layouts, CSS) coming soon.
 1. **Important:** Each snippet you add must include the comments `# name:` and `# desc:` at the very beginning of the `snippet` file.
 
    Example:
-   `# name: Snippet Title` (```)
+   `# name: Snippet Title`
    `# desc: Short description of what this snippet does`
 
 2. Create a folder with a descriptive `snake_case` name.
