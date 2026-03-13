@@ -1,0 +1,44 @@
+# name: Global Dynamic Title Resolver
+# desc: Resolves the current page title across all WordPress contexts (archives, search, 404, front-page, and single posts) while cleaning HTML tags and common prefixes.
+{
+  is_archive: php_function_output(
+    function: "is_archive"
+  ) @private,
+  is_search: php_function_output(
+    function: "is_search"
+  ) @private,
+  is_404: php_function_output(
+    function: "is_404"
+  ) @private,
+  is_front_page: php_function_output(
+    function: "is_front_page"
+  ) @private,
+  search_query: php_function_output(
+    function: "get_search_query"
+  ) @private,
+  post_title: php_function_output(
+    function: "get_the_title"
+  ) @private,
+  site_name: php_function_output(
+    function: "get_bloginfo",
+    arguments: ["name"]
+  ) @private,
+  archive_title_raw: php_function_output(
+    function: "get_the_archive_title"
+  ) @private,
+  archive_title_clean: php_function_output(
+    function: "strip_tags",
+    arguments: ["{{archive_title_raw}}"]
+  ) @private,
+  archive_title: php_function_output(
+    function: "str_replace",
+    arguments: [
+      ["Author: ", "Category: ", "Tag: ", "Archives: ", "Autor: ", "Categoría: ", "Etiqueta: ", "Archivos: "],
+      "",
+      "{{archive_title_clean}}"
+    ]
+  ) @private,
+  current_title: expression_result(
+    expression: "is_404 ? '404 Not Found' : (is_search ? 'Search: ' + search_query : (is_archive ? archive_title : (is_front_page ? site_name : post_title)))"
+  )
+}
