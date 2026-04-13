@@ -95,10 +95,12 @@ Set `data-b-context` on the Collection to point at the array. Inside the Templat
 | `Current post comments` | Hierarchical extraction of comments from the current post with response threads and active pagination |
 | `Direct Logout with Redirect` | Generates a secure logout URL that skips confirmation and redirects to a custom page |
 | `Estimated Reading Time` | Calculate reading time based on word count of the current post. |
+| `Extract the value of search` | It takes the value of the 's' parameter from the URL, very useful when you want the value of the dynamic search. |
 | `Get previous and next posts` | Fetch adjacent posts relative to the current post with featured images |
 | `Global Dynamic Title Resolver` | Resolves the current page title across all WordPress contexts (archives, search, 404, front-page, and single posts) while cleaning HTML tags and common prefixes. |
 | `URL for more button` | Displays the URL of the next post page, very useful for "more posts" buttons or for navigating to the next page. |
 | `Customized post query based on taxonomy terms` | Display posts from specific categories with flat category array |
+
 
 
 
