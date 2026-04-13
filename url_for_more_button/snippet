@@ -1,0 +1,15 @@
+# name: URL for more button
+# desc: Displays the URL of the next post page, very useful for "more posts" buttons or for navigating to the next page.
+{
+  archive {
+    posts_query {
+      pagination {
+        total_pages @private #data required to call the total number of pages
+        link_more_post: php_function_output(  #Function: Generate the URL of the next page
+          function: "get_next_posts_page_link",
+          arguments: ["{{total_pages}}"]
+        )
+      }
+    }
+  }
+}
