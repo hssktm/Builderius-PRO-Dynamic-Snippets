@@ -97,7 +97,9 @@ Set `data-b-context` on the Collection to point at the array. Inside the Templat
 | `Estimated Reading Time` | Calculate reading time based on word count of the current post. |
 | `Get previous and next posts` | Fetch adjacent posts relative to the current post with featured images |
 | `Global Dynamic Title Resolver` | Resolves the current page title across all WordPress contexts (archives, search, 404, front-page, and single posts) while cleaning HTML tags and common prefixes. |
+| `URL for more button` | Displays the URL of the next post page, very useful for "more posts" buttons or for navigating to the next page. |
 | `Customized post query based on taxonomy terms` | Display posts from specific categories with flat category array |
+
 
 
 
