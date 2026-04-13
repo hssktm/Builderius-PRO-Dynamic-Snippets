@@ -1,0 +1,6 @@
+# name: Extract the value of search
+# desc: It takes the value of the 's' parameter from the URL, very useful when you want the value of the dynamic search.
+
+{
+   url_search: php_function_output(function: "get_search_query")
+}
