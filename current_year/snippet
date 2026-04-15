@@ -1,0 +1,11 @@
+# name: Current Year 
+# desc: Extract the current year or current date from your WordPress site.
+
+{
+	current_year: php_function_output(
+        function: "wp_date", 
+        arguments: [
+            "Y"
+        ]
+    )
+}
