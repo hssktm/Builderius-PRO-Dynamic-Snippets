@@ -1,227 +1,290 @@
-# name: Dynamic Breadcrumbs
-# desc: Full breadcrumb system for posts, custom post types, and taxonomies without manual text.
 {
-  is_front: php_function_output(
-    function: "is_front_page"
-  ) @private
-  is_home: php_function_output(
-    function: "is_home"
-  ) @private
-  is_tax: php_function_output(
-    function: "is_tax"
-  ) @private
-  is_archive: php_function_output(
-    function: "is_post_type_archive"
-  ) @private
-  is_category: php_function_output(
-    function: "is_category"
-  ) @private
-  is_tag: php_function_output(
-    function: "is_tag"
-  ) @private
-  is_single: php_function_output(
-    function: "is_single"
-  ) @private
-  is_term_archive: expression_result(
-    expression: "is_tax || is_category || is_tag"
-  ) @private
-  q_obj: php_function_output(
-    function: "get_queried_object"
-  ) @private
-  q_id: php_function_output(
-    function: "get_queried_object_id"
-  ) @private
-  home_url: php_function_output(
-    function: "home_url",
-    arguments: ["/"]
-  ) @private
-  post_type: php_function_output(
-    function: "get_post_type"
-  ) @private
-  raw_pt: php_function_output(
-    function: "get_post_type_object",
-    arguments: ["{{post_type}}"]
-  ) @private
-  title_single: php_function_output(
-    function: "get_the_title",
-    arguments: ["{{q_id}}"]
-  ) @private
-  pt_label: expression_result(
-    expression: "raw_pt.label"
-  ) @private
-  pt_url: php_function_output(
-    function: "get_post_type_archive_link",
-    arguments: ["{{post_type}}"]
-  ) @private
-  home_id: php_function_output(
-    function: "get_option",
-    arguments: ["page_on_front"]
-  ) @private
-  home_title: php_function_output(
-    function: "get_the_title",
-    arguments: ["{{home_id}}"]
-  ) @private
-  item_h: expression_result(
-    expression: "!is_front && home_id ? [{ title: home_title, url: home_url, type: 'front_page' }] : []"
-  ) @private
-  blog_page_id: php_function_output(
-    function: "get_option",
-    arguments: ["page_for_posts"]
-  ) @private
-  blog_title: php_function_output(
-    function: "get_the_title",
-    arguments: ["{{blog_page_id}}"]
-  ) @private
-  blog_url: php_function_output(
-    function: "get_permalink",
-    arguments: ["{{blog_page_id}}"]
-  ) @private
-  is_blog_context: expression_result(
-    expression: "(is_single && post_type == 'post') || is_category || is_tag || is_home"
-  ) @private
-  item_blog: expression_result(
-    expression: "!is_home && is_blog_context && blog_page_id && blog_page_id != '0' && blog_url != home_url ? [{ title: blog_title, url: blog_url, type: 'blog' }] : []"
-  ) @private
-  item_a: expression_result(
-    expression: "(!is_front && !is_archive && !is_term_archive && post_type != 'page' && post_type != 'post' && pt_url != false) ? [{ title: pt_label, url: pt_url, type: 'archive' }] : []"
-  ) @private
-  parent_ids: php_function_output(
-    function: "get_post_ancestors",
-    arguments: ["{{q_id}}"]
-  ) @private
-  parent_ids_asc: php_function_output(
-    function: "array_reverse",
-    arguments: ["{{parent_ids}}"]
-  ) @private
-  parent_objs: php_function_output(
-    function: "array_map",
-    arguments: ["get_post", "{{parent_objs}}"]
-  ) @private
-  parent_nav: php_function_output(
-    function: "array_map",
-    arguments: ["wp_setup_nav_menu_item", "{{parent_objs}}"]
-  ) @private
-  item_p_raw: expression_result(
-    expression: "parent_nav && count(parent_nav) > 0 ? foreach(parent_nav, (p) -> { { title: p.title, url: p.url, type: 'parent' } }) : []"
-  ) @private
-  item_p: expression_result(
-    expression: "item_p_raw != null ? item_p_raw : []"
-  ) @private
-  term_taxonomy: expression_result(
-    expression: "is_term_archive && q_obj ? q_obj.taxonomy : ''"
-  ) @private
-  tax_obj: php_function_output(
-    function: "get_taxonomy",
-    arguments: ["{{term_taxonomy}}"]
-  ) @private
-  term_pt: expression_result(
-    expression: "tax_obj && count(tax_obj.object_type) > 0 ? tax_obj.object_type[0] : ''"
-  ) @private
-  term_pt_obj: php_function_output(
-    function: "get_post_type_object",
-    arguments: ["{{term_pt}}"]
-  ) @private
-  term_pt_label: expression_result(
-    expression: "term_pt_obj ? term_pt_obj.label : ''"
-  ) @private
-  term_pt_url: php_function_output(
-    function: "get_post_type_archive_link",
-    arguments: ["{{term_pt}}"]
-  ) @private
-  item_tax_cpt: expression_result(
-    expression: "is_term_archive && term_pt != 'post' && term_pt != 'page' && term_pt_url != false ? [{ title: term_pt_label, url: term_pt_url, type: 'archive' }] : []"
-  ) @private
-  term_anc_ids: php_function_output(
-    function: "get_ancestors",
-    arguments: ["{{q_id}}", "{{term_taxonomy}}"]
-  ) @private
-  term_anc_ids_asc: php_function_output(
-    function: "array_reverse",
-    arguments: ["{{term_anc_ids}}"]
-  ) @private
-  term_anc_objs: php_function_output(
-    function: "array_map",
-    arguments: ["get_term", "{{term_anc_ids_asc}}"]
-  ) @private
-  term_anc_nav: php_function_output(
-    function: "array_map",
-    arguments: ["wp_setup_nav_menu_item", "{{term_anc_objs}}"]
-  ) @private
-  item_tax_anc_raw: expression_result(
-    expression: "term_anc_nav && count(term_anc_nav) > 0 ? foreach(term_anc_nav, (t) -> { { title: t.title, url: t.url, type: 'taxonomy' } }) : []"
-  ) @private
-  item_tax_anc: expression_result(
-    expression: "item_tax_anc_raw != null ? item_tax_anc_raw : []"
-  ) @private
-  all_taxonomies: php_function_output(
-    function: "get_object_taxonomies",
-    arguments: ["{{term_pt != '' ? term_pt : post_type}}"]
-  ) @private
-  get_filter_tax: php_function_output(
-    function: "array_reduce",
-    arguments: ["{{all_taxonomies}}", "function($c,$t){if($c)return $c;if(isset(get_queried_object()->taxonomy)&&get_queried_object()->taxonomy===$t)return '';return!empty($_GET[$t])&&is_string($_GET[$t])?$t:'';}", ""]
-  ) @private
-  get_filter_slug: url_parameter(
-    name: "{{get_filter_tax}}"
-  ) @private
-  get_filter_term: php_function_output(
-    function: "get_term_by",
-    arguments: ["slug", "{{get_filter_slug}}", "{{get_filter_tax}}"]
-  ) @private
-  has_get_filter: expression_result(
-    expression: "get_filter_term != null && get_filter_term != false"
-  ) @private
-  get_filter_anc_ids: php_function_output(
-    function: "get_ancestors",
-    arguments: ["{{has_get_filter ? get_filter_term.term_id : 0}}", "{{has_get_filter ? get_filter_term.taxonomy : ''}}"]
-  ) @private
-  get_filter_anc_ids_asc: php_function_output(
-    function: "array_reverse",
-    arguments: ["{{get_filter_anc_ids}}"]
-  ) @private
-  get_filter_anc_objs: php_function_output(
-    function: "array_map",
-    arguments: ["get_term", "{{get_filter_anc_ids_asc}}"]
-  ) @private
-  get_filter_anc_nav: php_function_output(
-    function: "array_map",
-    arguments: ["wp_setup_nav_menu_item", "{{get_filter_anc_objs}}"]
-  ) @private
-  item_get_anc_raw: expression_result(
-    expression: "has_get_filter && get_filter_anc_nav && count(get_filter_anc_nav) > 0 ? foreach(get_filter_anc_nav, (t) -> { { title: t.title, url: t.url, type: 'taxonomy' } }) : []"
-  ) @private
-  item_get_anc: expression_result(
-    expression: "item_get_anc_raw != null ? item_get_anc_raw : []"
-  ) @private
-  q_obj_nav: php_function_output(
-    function: "wp_setup_nav_menu_item",
-    arguments: ["{{q_obj}}"]
-  ) @private
-  item_c_linked: expression_result(
-    expression: "is_term_archive && has_get_filter && q_obj_nav ? [{ title: q_obj_nav.title, url: q_obj_nav.url, type: 'taxonomy' }] : []"
-  ) @private
-  item_get_current: expression_result(
-    expression: "has_get_filter ? [{ title: get_filter_term.name, url: '', type: 'current_page' }] : []"
-  ) @private
-  item_c: expression_result(
-    expression: "is_front ? [] : (is_home ? [{ title: blog_title, url: '', type: 'current_page' }] : (is_term_archive && !has_get_filter ? [{ title: q_obj.name, url: '', type: 'current_page' }] : (is_archive && !has_get_filter ? [{ title: pt_label, url: '', type: 'current_page' }] : (has_get_filter ? [] : [{ title: title_single, url: '', type: 'current_page' }]))))"
-  ) @private
-  raw_breadcrumbs: php_function_output(
-    function: "array_merge",
-    arguments: [
-      "{{item_h}}",
-      "{{item_blog}}",
-      "{{item_a}}",
-      "{{item_tax_cpt}}",
-      "{{item_tax_anc}}",
-      "{{item_p}}",
-      "{{item_c_linked}}",
-      "{{item_get_anc}}",
-      "{{item_get_current}}",
-      "{{item_c}}"
-    ]
-  ) @private
-  breadcrumbs: expression_result(
-    expression: "count(raw_breadcrumbs) > 1 ? raw_breadcrumbs : []"
-  )
+is_front: php_function_output(
+function: "is_front_page"
+) @private
+is_home: php_function_output(
+function: "is_home"
+) @private
+is_tax: php_function_output(
+function: "is_tax"
+) @private
+is_archive: php_function_output(
+function: "is_archive"
+) @private
+is_category: php_function_output(
+function: "is_category"
+) @private
+is_tag: php_function_output(
+function: "is_tag"
+) @private
+is_single: php_function_output(
+function: "is_single"
+) @private
+is_author: php_function_output(
+function: "is_author"
+) @private
+is_search: php_function_output(
+function: "is_search"
+) @private
+search_query: php_function_output(
+function: "get_search_query"
+) @private
+is_term_archive: expression_result(
+expression: "is_tax || is_category || is_tag"
+) @private
+q_obj: php_function_output(
+function: "get_queried_object"
+) @private
+q_id: php_function_output(
+function: "get_queried_object_id"
+) @private
+archive_title_raw: php_function_output(
+function: "get_the_archive_title"
+) @private
+archive_title_clean: php_function_output(
+function: "strip_tags",
+arguments: ["{{archive_title_raw}}"]
+) @private
+archive_title: php_function_output(
+function: "str_replace",
+arguments: [
+["Author: ", "Category: ", "Tag: ", "Archives: ", "Autor: ", "Categoría: ", "Etiqueta: ", "Archivos: ", "Day: ", "Month: ", "Year: ", "Día: ", "Mes: ", "Año: "],
+"",
+"{{archive_title_clean}}"
+]
+) @private
+author_display_name: expression_result(
+expression: "is_author && q_obj ? q_obj.display_name : ''"
+) @private
+home_url: php_function_output(
+function: "home_url",
+arguments: ["/"]
+) @private
+post_type: php_function_output(
+function: "get_post_type"
+) @private
+pt_from_archive: php_function_output(
+function: "get_query_var",
+arguments: ["post_type"]
+) @private
+effective_post_type: expression_result(
+expression: "post_type ? post_type : (is_archive ? pt_from_archive : '')"
+) @private
+raw_pt: php_function_output(
+function: "get_post_type_object",
+arguments: ["{{effective_post_type}}"]
+) @private
+title_single: php_function_output(
+function: "get_the_title",
+arguments: ["{{q_id}}"]
+) @private
+pt_label: expression_result(
+expression: "raw_pt.label"
+) @private
+pt_url: php_function_output(
+function: "get_post_type_archive_link",
+arguments: ["{{effective_post_type}}"]
+) @private
+home_id: php_function_output(
+function: "get_option",
+arguments: ["page_on_front"]
+) @private
+home_title: php_function_output(
+function: "get_the_title",
+arguments: ["{{home_id}}"]
+) @private
+item_h: expression_result(
+expression: "!is_front && home_id ? [{ title: home_title, url: home_url, type: 'front_page' }] : []"
+) @private
+blog_page_id: php_function_output(
+function: "get_option",
+arguments: ["page_for_posts"]
+) @private
+blog_title: php_function_output(
+function: "get_the_title",
+arguments: ["{{blog_page_id}}"]
+) @private
+blog_url: php_function_output(
+function: "get_permalink",
+arguments: ["{{blog_page_id}}"]
+) @private
+is_blog_context: expression_result(
+expression: "(is_single && post_type == 'post') || is_category || is_tag || is_home || (is_archive && effective_post_type == 'post')"
+) @private
+blog_is_front: expression_result(
+expression: "blog_page_id == home_id || (blog_page_id == '0' && is_front)"
+) @private
+item_blog: expression_result(
+expression: "!is_home && is_blog_context && !blog_is_front ? (blog_page_id && blog_page_id != '0' ? [{ title: blog_title, url: blog_url, type: 'blog' }] : [{ title: 'Blog', url: home_url, type: 'blog' }]) : []"
+) @private
+item_a: expression_result(
+expression: "(!is_front && !is_archive && !is_term_archive && effective_post_type != 'page' && effective_post_type != 'post' && pt_url != false) ? [{ title: pt_label, url: pt_url, type: 'archive' }] : []"
+) @private
+parent_ids: php_function_output(
+function: "get_post_ancestors",
+arguments: ["{{q_id}}"]
+) @private
+parent_ids_asc: php_function_output(
+function: "array_reverse",
+arguments: ["{{parent_ids}}"]
+) @private
+parent_objs: php_function_output(
+function: "array_map",
+arguments: ["get_post", "{{parent_ids_asc}}"]
+) @private
+parent_nav: php_function_output(
+function: "array_map",
+arguments: ["wp_setup_nav_menu_item", "{{parent_objs}}"]
+) @private
+item_p_raw: expression_result(
+expression: "parent_nav && count(parent_nav) > 0 ? foreach(parent_nav, (p) -> { { title: p.title, url: p.url, type: 'parent' } }) : []"
+) @private
+item_p: expression_result(
+expression: "item_p_raw != null ? item_p_raw : []"
+) @private
+term_taxonomy: expression_result(
+expression: "is_term_archive && q_obj ? q_obj.taxonomy : ''"
+) @private
+tax_obj: php_function_output(
+function: "get_taxonomy",
+arguments: ["{{term_taxonomy}}"]
+) @private
+term_pt: expression_result(
+expression: "tax_obj && count(tax_obj.object_type) > 0 ? tax_obj.object_type[0] : ''"
+) @private
+term_pt_obj: php_function_output(
+function: "get_post_type_object",
+arguments: ["{{term_pt}}"]
+) @private
+term_pt_label: expression_result(
+expression: "term_pt_obj ? term_pt_obj.label : ''"
+) @private
+term_pt_url: php_function_output(
+function: "get_post_type_archive_link",
+arguments: ["{{term_pt}}"]
+) @private
+item_tax_cpt: expression_result(
+expression: "is_term_archive && term_pt != 'post' && term_pt != 'page' && term_pt_url != false ? [{ title: term_pt_label, url: term_pt_url, type: 'archive' }] : []"
+) @private
+term_anc_ids: php_function_output(
+function: "get_ancestors",
+arguments: ["{{q_id}}", "{{term_taxonomy}}"]
+) @private
+term_anc_ids_asc: php_function_output(
+function: "array_reverse",
+arguments: ["{{term_anc_ids}}"]
+) @private
+term_anc_objs: php_function_output(
+function: "array_map",
+arguments: ["get_term", "{{term_anc_ids_asc}}"]
+) @private
+term_anc_nav: php_function_output(
+function: "array_map",
+arguments: ["wp_setup_nav_menu_item", "{{term_anc_objs}}"]
+) @private
+item_tax_anc_raw: expression_result(
+expression: "term_anc_nav && count(term_anc_nav) > 0 ? foreach(term_anc_nav, (t) -> { { title: t.title, url: t.url, type: 'taxonomy' } }) : []"
+) @private
+item_tax_anc: expression_result(
+expression: "item_tax_anc_raw != null ? item_tax_anc_raw : []"
+) @private
+get_taxonomies: php_function_output(
+function: "get_object_taxonomies",
+arguments: ["{{effective_post_type}}"]
+) @private
+target_taxonomy: expression_result(
+expression: "effective_post_type == 'post' || is_category || is_tag ? 'category' : (get_taxonomies && count(get_taxonomies) > 0 ? get_taxonomies[0] : null)"
+) @private
+raw_terms: php_function_output(
+function: "get_the_terms",
+arguments: ["{{q_id}}", "{{target_taxonomy}}"]
+) @private
+term_ids_list: php_function_output(
+function: "wp_list_pluck",
+arguments: ["{{raw_terms}}", "term_id"]
+) @private
+main_term_id: php_function_output(
+function: "max",
+arguments: ["{{term_ids_list}}"]
+) @private
+main_term_parent_ids: php_function_output(
+function: "get_ancestors",
+arguments: ["{{main_term_id}}", "{{target_taxonomy}}"]
+) @private
+main_term_parents_asc: php_function_output(
+function: "array_reverse",
+arguments: ["{{main_term_parent_ids}}"]
+) @private
+full_term_path: php_function_output(
+function: "array_merge",
+arguments: ["{{main_term_parents_asc}}", ["{{main_term_id}}"]]
+) @private
+full_term_objs: php_function_output(
+function: "array_map",
+arguments: ["get_term", "{{full_term_path}}"]
+) @private
+full_term_nav: php_function_output(
+function: "array_map",
+arguments: ["wp_setup_nav_menu_item", "{{full_term_objs}}"]
+) @private
+category_items_raw: expression_result(
+expression: "!is_term_archive && !is_archive && !is_home && full_term_nav && count(full_term_nav) > 0 ? foreach(full_term_nav, (t) -> { { title: t.title, url: t.url, type: 'taxonomy' } }) : []"
+) @private
+category_items: expression_result(
+expression: "category_items_raw != null ? category_items_raw : []"
+) @private
+all_taxonomies: php_function_output(
+function: "get_object_taxonomies",
+arguments: ["{{term_pt != '' ? term_pt : effective_post_type}}"]
+) @private
+request_uri: php_function_output(
+function: "parse_url",
+arguments: ["{{server_parameter(name: 'REQUEST_URI')}}", "PHP_URL_QUERY"]
+) @private
+query_params: php_function_output(
+function: "wp_parse_args",
+arguments: ["{{request_uri}}"]
+) @private
+get_filters_raw: php_function_output(
+function: "array_reduce",
+arguments: ["{{all_taxonomies}}", "function($c,$t) use ($query_params){$q=get_queried_object();$cur=isset($q->taxonomy)?$q->taxonomy:'';if($t===$cur)return $c;if(!empty($query_params[$t])&&is_string($query_params[$t])){$term=get_term_by('slug',sanitize_text_field($query_params[$t]),$t);if($term){$c[]=['title'=>$term->name,'url'=>get_term_link($term),'taxonomy'=>$t];}}return $c;}", "[]"]
+) @private
+get_filters_count: expression_result(
+expression: "get_filters_raw ? count(get_filters_raw) : 0"
+) @private
+get_filters_linked_raw: expression_result(
+expression: "get_filters_count > 1 ? foreach(filter(get_filters_raw, (f, i) -> { i < get_filters_count - 1 }), (f) -> { { title: f.title, url: f.url, type: 'taxonomy' } }) : []"
+) @private
+get_filters_linked: expression_result(
+expression: "get_filters_linked_raw != null ? get_filters_linked_raw : []"
+) @private
+get_filters_current: expression_result(
+expression: "get_filters_count > 0 ? [{ title: get_filters_raw[get_filters_count - 1].title, url: '', type: 'current_page' }] : []"
+) @private
+q_obj_nav: php_function_output(
+function: "wp_setup_nav_menu_item",
+arguments: ["{{q_obj}}"]
+) @private
+item_c_linked: expression_result(
+expression: "is_term_archive && get_filters_count > 0 && q_obj_nav ? [{ title: q_obj_nav.title, url: q_obj_nav.url, type: 'taxonomy' }] : []"
+) @private
+item_c: expression_result(
+expression: "is_front ? [] : (is_home ? [{ title: blog_title, url: '', type: 'current_page' }] : (is_search ? [{ title: 'Search: ' + search_query, url: '', type: 'current_page' }] : (is_author ? [{ title: author_display_name, url: '', type: 'current_page' }] : (is_term_archive && get_filters_count == 0 ? [{ title: q_obj.name, url: '', type: 'current_page' }] : (is_archive ? [{ title: archive_title, url: '', type: 'current_page' }] : (get_filters_count > 0 ? [] : [{ title: title_single, url: '', type: 'current_page' }]))))))"
+) @private
+breadcrumbs: php_function_output(
+function: "array_merge",
+arguments: [
+"{{item_h}}",
+"{{item_blog}}",
+"{{item_a}}",
+"{{item_tax_cpt}}",
+"{{item_tax_anc}}",
+"{{item_p}}",
+"{{category_items}}",
+"{{item_c_linked}}",
+"{{get_filters_linked}}",
+"{{get_filters_current}}",
+"{{item_c}}"
+]
+)
 }
